@@ -274,9 +274,9 @@ int main() {
     std::cout << std::endl;
     avl.PrintInOrderTraversal(std::cout);
     std::cout << std::endl;
-    std::cout << "Min element: " << avl.Min();
+    std::cout << "Min value: " << avl.Min();
     std::cout << std::endl;
-    std::cout << "Max element: " << avl.Max();
+    std::cout << "Max value: " << avl.Max();
     std::cout << std::endl;
 
     return 0;

@@ -1,50 +1,51 @@
 #include <iostream>
 #include <fstream>
 
+template <class T>
 struct Node {
     int count, level;
-    int key;
+    T key;
     Node *right;
     Node *left;
     Node *parent;
 };
 
+template <class T>
 class AATree {
 public:
     AATree();
     ~AATree();
 
-    int Insert(int);
-    bool Delete(int);
+    T Insert(T);
+    bool Delete(T);
 
-    int Min();
-    int Max();
+    T Min();
+    T Max();
     void Print();
 
-    Node *Search(Node *, int);
+    Node<T> *Search(Node<T> *, T);
 
 private:
-    Node *root;
-    Node *NIL;
+    Node<T> *root;
 
-    void DeallocMemory(Node *N);
-    void Skew(Node *);
-    void Rebal(Node *);
-    bool Split(Node *);
-    void PrintHelper(Node *);
-    Node *InsertHelper(Node *, Node *);
-    bool DeleteValueHelper(Node *, Node *, int);
+    void DeallocMemory(Node<T> *N);
+    void Skew(Node<T> *);
+    void Rebal(Node<T> *);
+    bool Split(Node<T> *);
+    void PrintHelper(Node<T> *);
+    Node<T> *InsertHelper(Node<T> *, Node<T> *);
+    bool DeleteHelper(Node<T> *, Node<T> *, T);
 };
 
-AATree::AATree(){
-    root = NIL = new Node;
+template <class T>
+AATree<T>::AATree(){
+    root = new Node<T>;
     root = nullptr;
-//    root->left = root->right = nullptr;
-    NIL->left = NIL->right = nullptr;
 }
 
-void AATree::DeallocMemory(Node *N) {
-    if (N == NIL) {
+template <class T>
+void AATree<T>::DeallocMemory(Node<T> *N) {
+    if (N == nullptr) {
         return;
     }
     DeallocMemory(N->left);
@@ -52,23 +53,13 @@ void AATree::DeallocMemory(Node *N) {
     delete N;
 }
 
-AATree::~AATree() {
+template <class T>
+AATree<T>::~AATree() {
     DeallocMemory(root);
 }
 
-int AATree::Insert(int value) {
-    Node *temp = new Node;
-    temp->key = value;
-    temp->level = 1;
-    temp->count = 0;
-    temp->left = nullptr;
-    temp->right = nullptr;
-    temp->parent = nullptr;
-    temp = InsertHelper(root, temp);
-    return temp->count;
-}
-
-Node* AATree::InsertHelper(Node *temp, Node *ins) {
+template <class T>
+Node<T> *AATree<T>::InsertHelper(Node<T> *temp, Node<T> *ins) {
     if (root == nullptr) {
         ins->count = 1;
         ins->parent = nullptr;
@@ -106,9 +97,65 @@ Node* AATree::InsertHelper(Node *temp, Node *ins) {
     return temp;
 }
 
-void AATree::Skew(Node *temp)
+template <class T>
+T AATree<T>::Insert(T value) {
+    Node<T> *temp = new Node<T>;
+    temp->key = value;
+    temp->level = 1;
+    temp->count = 0;
+    temp->left = nullptr;
+    temp->right = nullptr;
+    temp->parent = nullptr;
+    temp = InsertHelper(root, temp);
+    return temp->count;
+}
+
+template <class T>
+bool AATree<T>::DeleteHelper(Node<T> *parent, Node<T> *current, T value) {
+    if (!current) {
+        return false;
+    }
+    if (current->key == value) {
+        if (current->left == nullptr || current->right == nullptr) {
+            Node<T>* temp = current->left;
+            if (current->right) {
+                temp = current->right;
+            }
+            if (parent) {
+                if (parent->left == current) {
+                    parent->left = temp;
+                } else {
+                    parent->right = temp;
+                }
+            } else {
+                root = temp;
+            }
+        } else {
+            Node<T>* validSubs = current->right;
+            while (validSubs->left) {
+                validSubs = validSubs->left;
+            }
+            T temp = current->key;
+            current->key = validSubs->key;
+            validSubs->key = temp;
+            return DeleteHelper(current, current->right, temp);
+        }
+        delete current;
+        return true;
+    }
+    return DeleteHelper(current, current->left, value) ||
+            DeleteHelper(current, current->right, value);
+}
+
+template <class T>
+bool AATree<T>::Delete(T value) {
+    return this->DeleteHelper(nullptr, root, value);
+}
+
+template <class T>
+void AATree<T>::Skew(Node<T> *temp)
 {
-    Node *ptr = temp->left;
+    Node<T> *ptr = temp->left;
     if (temp->parent->left == temp)
         temp->parent->left = ptr;
     else
@@ -122,9 +169,10 @@ void AATree::Skew(Node *temp)
     temp->level = (temp->left ? temp->left->level + 1 : 1);
 }
 
-bool AATree::Split(Node *temp)
+template <class T>
+bool AATree<T>::Split(Node<T> *temp)
 {
-    Node* ptr = temp->right;
+    Node<T>* ptr = temp->right;
     if (ptr && ptr->right && (ptr->right->level == temp->level)) {
         if (temp->parent->left == temp) {
             temp->parent->left = ptr;
@@ -145,7 +193,8 @@ bool AATree::Split(Node *temp)
     return false;
 }
 
-void AATree::Rebal(Node *temp) {
+template <class T>
+void AATree<T>::Rebal(Node<T> *temp) {
     temp->left = nullptr;
     temp->right = nullptr;
     temp->level = 1;
@@ -167,77 +216,44 @@ void AATree::Rebal(Node *temp) {
     }
 }
 
-void AATree::PrintHelper(Node *temp) {
+template <class T>
+void AATree<T>::PrintHelper(Node<T> *temp) {
     if (!temp) {
         return;
     }
     PrintHelper(temp->left);
-    std::cout <<"Value: "<<temp->key << "  Count:" << temp->count;
-    std::cout<<"  Level: "<<temp->level<<std::endl;
+//    std::cout <<"Value: "<<temp->key << "  Count:" << temp->count;
+//    std::cout<<"  Level: "<<temp->level<<std::endl;
+    std::cout << temp->key << " ";
     PrintHelper(temp->right);
 }
 
-void AATree::Print() {
+template <class T>
+void AATree<T>::Print() {
     PrintHelper(root);
+    std::cout << std::endl;
 }
 
-bool AATree::DeleteValueHelper(Node *parent, Node *current, int value) {
-    if (!current) {
-        return false;
-    }
-    if (current->key == value) {
-        if (current->left == nullptr || current->right == nullptr) {
-            Node* temp = current->left;
-            if (current->right) {
-                temp = current->right;
-            }
-            if (parent) {
-                if (parent->left == current) {
-                    parent->left = temp;
-                } else {
-                    parent->right = temp;
-                }
-            } else {
-                root = temp;
-            }
-        } else {
-            Node* validSubs = current->right;
-            while (validSubs->left) {
-                validSubs = validSubs->left;
-            }
-            int temp = current->key;
-            current->key = validSubs->key;
-            validSubs->key = temp;
-            return DeleteValueHelper(current, current->right, temp);
-        }
-        delete current;
-        return true;
-    }
-    return DeleteValueHelper(current, current->left, value) ||
-            DeleteValueHelper(current, current->right, value);
-}
-
-bool AATree::Delete(int value) {
-    return this->DeleteValueHelper(nullptr, root, value);
-}
-
-int AATree::Min() {
-    Node *N = root;
+template <class T>
+T AATree<T>::Min() {
+    Node<T> *N = root;
     while (N->left != nullptr) {
         N = N->left;
     }
     return N->key;
 }
 
-int AATree::Max() {
-    Node *N = root;
+template <class T>
+T AATree<T>::Max() {
+    Node<T> *N = root;
     while (N->right != nullptr) {
         N = N->right;
     }
     return N->key;
 }
 
-Node *AATree::Search(Node *temp, int value) {
+template <class T>
+Node<T> *AATree<T>::Search(Node<T> *temp, T value) {
     if (temp == nullptr) {
         return temp;
     }
@@ -256,60 +272,16 @@ Node *AATree::Search(Node *temp, int value) {
 }
 
 int main() {
-    AATree aaTree;
-    int command = 0;
-    std::string str;
-    int item = 0;
-    std::ifstream fin ("test.txt");
-    while (true) {
-        std::cout<<"\n---------------------"<<std::endl;
-        std::cout<<"\nOperations on AA Tree"<<std::endl;
-        std::cout<<"\n---------------------"<<std::endl;
-        std::cout<<"1.Insert String into the Tree"<<std::endl;
-        std::cout<<"2.Print Tree Data"<<std::endl;
-        std::cout<<"3.Delete value"<<std::endl;
-        std::cout<<"4.Max value"<<std::endl;
-        std::cout<<"5.Min value"<<std::endl;
-        std::cout<<"6.Exit"<<std::endl;
-        std::cout<<"Enter Your Choice: ";
-        std::cin>>command;
-        switch (command) {
-            case 1:
-                if (fin.is_open()) {
-                    while (fin>>str) {
-                        int value = atoi(str.c_str());
-                        aaTree.Insert(value);
-                    }
-                    fin.close();
-                }
-                break;
-            case 2:
-                std::cout<<"Elemets of AA Tree"<<std::endl;
-                aaTree.Print();
-                break;
-            case 3:
-                std::cout<<"Value to delete: ";
-                std::cin >> item;
-                aaTree.Delete(item);
-                break;
-            case 4:
-                std::cout << "Max Value: ";
-                std::cout << aaTree.Max();
-                break;
-            case 5:
-                std::cout << "Min Value: ";
-                std::cout << aaTree.Min();
-                break;
-            case 6:
-                std::cout<<"Exiting"<<std::endl;
-                exit(1);
-            default:
-                std::cout<<"Wrong Choice"<<std::endl;
-        }
-    }
-
-//    AATree aaTree;
-//    aaTree.Insert();
-//
-//    return 0;
+    AATree<int> aaTree;
+    aaTree.Insert(3);
+    aaTree.Insert(43);
+    aaTree.Insert(146);
+    aaTree.Insert(5);
+    aaTree.Insert(50);
+    aaTree.Print();
+    std::cout << "Min value: " << aaTree.Min() << std::endl;
+    std::cout << "Max value: " << aaTree.Max() << std::endl;
+    aaTree.Delete(43);
+    aaTree.Print();
+    return 0;
 }
