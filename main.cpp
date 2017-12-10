@@ -1,124 +1,169 @@
-#include <iostream>
-#include <cassert>
-#include <sstream>
+
+#include <cmath>
 #include <fstream>
+#include <iostream>
 
-#include <ctime>
 
-//#include "AA/AATree.hpp"
-#include "AVL/AVLTree.hpp"
+struct node // структура для представления узлов дерева
+{
+    int key;
+    unsigned char height;
+    node* left;
+    node* right;
+    node(int k) { key = k; left = right = 0; height = 1; }
+};
 
-bool LineIsOk(const std::string &str, const std::string &command) {
-    std::istringstream iss(str);
-    std::string tmp;
-
-    iss >> tmp;
-    if (tmp != command) {
-        return false;
-    }
-    tmp.clear();
-    iss >> tmp;
-
-    if (tmp.empty()) {
-        return false;
-    }
-
-    tmp.clear();
-    iss >> tmp;
-
-    return tmp.empty();
+unsigned char height(node* p)
+{
+    return p?p->height:0;
 }
 
-int FindValue(const std::string &str) {
-    std::istringstream iss(str);
-    std::string tmp;
-    iss >> tmp;
-    tmp.clear();
-    iss >> tmp;
-    int value = atoi(tmp.c_str());
-    return value;
+int bfactor(node* p)
+{
+    return height(p->right)-height(p->left);
 }
 
-bool FileIsEqual(const std::string &firstFileName, const std::string &secondFileName) {
-    std::ifstream firstFile(firstFileName), secondFile(secondFileName);
-    assert(firstFile);
-    assert(secondFile);
-
-    std::string buffer1((std::istreambuf_iterator<char>(firstFile)), std::istreambuf_iterator<char>());
-    std::string buffer2((std::istreambuf_iterator<char>(secondFile)), std::istreambuf_iterator<char>());
-    firstFile.close();
-    secondFile.close();
-
-    return (buffer1 == buffer2);
+void fixheight(node* p)
+{
+    unsigned char hl = height(p->left);
+    unsigned char hr = height(p->right);
+    p->height = (hl>hr?hl:hr)+1;
 }
 
-int main(int argc, char *argv[]) {
-    if (argc < 4) {
-        return 0;
+node* rotateright(node* p) // правый поворот вокруг p
+{
+    node* q = p->left;
+    p->left = q->right;
+    q->right = p;
+    fixheight(p);
+    fixheight(q);
+    return q;
+}
+
+node* rotateleft(node* q) // левый поворот вокруг q
+{
+    node* p = q->right;
+    q->right = p->left;
+    p->left = q;
+    fixheight(q);
+    fixheight(p);
+    return p;
+}
+
+node* balance(node* p) // балансировка узла p
+{
+    fixheight(p);
+    if( bfactor(p)==2 )
+    {
+        if( bfactor(p->right) < 0 )
+            p->right = rotateright(p->right);
+        return rotateleft(p);
     }
-    std::string line;
-    std::ifstream fileIn(argv[1]);
-    assert(fileIn);
-    std::ofstream fileOut(argv[2]);
-    assert(fileOut);
+    if( bfactor(p)==-2 )
+    {
+        if( bfactor(p->left) > 0  )
+            p->left = rotateleft(p->left);
+        return rotateright(p);
+    }
+    return p; // балансировка не нужна
+}
 
-    AVLTree<int> avlTree;
 
-    srand(time(0));
+node* insertIn(node* p, int k) // вставка ключа k в дерево с корнем p
+{
 
-    while (getline(fileIn, line)) {
-        if (line.find("delete") == 0) {
-            if (LineIsOk(line, "delete")) {
-                avlTree.Delete(FindValue(line));
-            } else {
-                fileOut << "error" << std::endl;
+    if( !p ) return new node(k);
+    if( k<p->key )
+        p->left = insertIn(p->left,k);
+    else
+        p->right = insertIn(p->right,k);
+
+    return balance(p);
+
+}
+
+void insert (int k) {
+    node = insertIn(node,k);
+}
+
+node* searchmin(node* p) // поиск узла с минимальным ключом в дереве p
+{
+    return p->left?searchmin(p->left):p;
+}
+
+void searchIn(int x,node* p) {
+
+    if (p==NULL) {
+        std::cout<<"Такого элемента нет\n"<<std::endl;
+    }
+    else {
+        if (x < p->key) {
+            searchIn(x,p->left);
+        }
+        else {
+            if (x>p->key) {
+                searchIn(x,p->right);
+            }
+            else {
+                std::cout<<"Такой элемент есть\n"<<std::endl;
             }
         }
-        if (line == "print") {
-//            std::string buffer;
-            avlTree.PrintInOrderTraversal(fileOut);
-            fileOut << std::endl;
-        }
-        if (line.find("add") == 0) {
-            if (LineIsOk(line, "add") != 0) {
-                avlTree.Insert(FindValue(line));
-            } else {
-                fileOut << "error" << std::endl;
-            }
-        }
-        if (line == "min") {
-            fileOut << avlTree.Min() << std::endl;
-        }
-        if (line == "max") {
-            fileOut << avlTree.Max() << std::endl;
-        }
-        if (line == " ") {
-            fileOut << "error" << std::endl;
-        }
-    }
-
-    std::cout << "runtime = " << clock()/1000.0 << std::endl;
-
-    fileIn.close();
-    fileOut.close();
-
-    if (FileIsEqual(argv[2], argv[3])) {
-        std::cout << "Correct" << std::endl;
-    } else {
-        std::cout << "Not correct" << std::endl;
     }
 
 
-//    std::string line = "delete";
-//    std::string line2 = "delete 13";
-//    std::string line3 = "add 3";
-//    std::string line4 = "add";
-//
-//    std::cout << LineIsOk(line, "delete") << std::endl;
-//    std::cout << LineIsOk(line2, "delete") << std::endl;
-//    std::cout << LineIsOk(line3, "add") << std::endl;
-//    std::cout << LineIsOk(line4, "add") << std::endl;
+}
 
-    return 0;
+bool search(int k) {
+    searchIn(k,node);
+}
 
+node* removemin(node* p) // удаление узла с минимальным ключом из дерева p
+{
+    if( p->left==0 )
+        return p->right;
+    p->left = removemin(p->left);
+    return balance(p);
+
+
+}
+
+node* removeIn(node* p, int k) // удаление ключа k из дерева p
+{
+    if( !p ) return 0;
+    if( k < p->key )
+        p->left = removeIn(p->left,k);
+    else if( k > p->key )
+        p->right = removeIn(p->right,k);
+    else //  k == p->key
+    {
+        node* q = p->left;
+        node* r = p->right;
+        delete p;
+        if( !r ) return q;
+        node* min = searchmin(r);
+        min->right = removemin(r);
+        min->left = q;
+        return balance(min);
+    }
+    return balance(p);
+
+
+}
+
+void remove(int k) {
+    node = removeIn(k,node);
+}
+
+
+void PrintIn (std::ostream &outputstream, node* p) {
+    if (p == nullptr) {
+        return;
+    }
+    PrintIn(outputstream, p->left);
+    outputstream << p->key << " ";
+    PrintIn(outputstream, p->right);
+}
+
+void print(std::ostream &outputstream) {
+    PrintIn(outputstream, node);
 }
