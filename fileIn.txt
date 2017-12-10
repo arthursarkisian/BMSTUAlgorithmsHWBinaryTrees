@@ -1,11 +1,40 @@
+add 7
+add 4
+min
+max
 add 10
 add 3
-add 256
-print
-delete 3
-add 12
+min
+max
+add 34
+add 65
+min
+max
 add 43
-delete
-print
+add 32
+min
+max
+add 9
+add 4
+min
+max
+add 6
+add 67
+min
+max
+add 23
+add 123
+min
+max
+add 67
+add 98
+min
+max
+add 76
+add 12
+min
+max
+add 1
+add 56
 min
 max

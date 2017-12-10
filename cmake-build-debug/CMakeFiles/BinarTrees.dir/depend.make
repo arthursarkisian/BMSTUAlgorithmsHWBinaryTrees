@@ -5,6 +5,7 @@ CMakeFiles/BinarTrees.dir/AA/AATree.cpp.o: ../AA/AATree.cpp
 
 CMakeFiles/BinarTrees.dir/AVL/AVLTree.cpp.o: ../AVL/AVLTree.cpp
 
+CMakeFiles/BinarTrees.dir/main.cpp.o: ../AA/AATree.hpp
 CMakeFiles/BinarTrees.dir/main.cpp.o: ../AVL/AVLTree.hpp
 CMakeFiles/BinarTrees.dir/main.cpp.o: ../main.cpp
 

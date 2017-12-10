@@ -1,11 +1,11 @@
 #include<iostream>
 
 template<class T>
-struct Node {
+struct AVLNode {
     T value;
     int height;
-    Node *left;
-    Node *right;
+    AVLNode *left;
+    AVLNode *right;
 };
 
 template<class T>
@@ -27,28 +27,28 @@ public:
     void PrintPostOrderTraversal(std::ostream &);
 
 private:
-    Node<T> *root;
-    Node<T> *NIL;
+    AVLNode<T> *root;
+    AVLNode<T> *NIL;
 
-    void GetHeight(Node<T> *N);
+    void GetHeight(AVLNode<T> *N);
 
-    Node<T>* SearchHelper(Node<T> *temp, T value);
-    Node<T>* InsertHelper(Node<T> *temp, T value);
-    Node<T>* DeleteHelper(Node<T> *temp, T value);
-    Node<T>* RotateLeft(Node<T> *temp);
-    Node<T>* RotateRight(Node<T> *temp);
-    Node<T>* Balance(Node<T> *temp);
+    AVLNode<T>* SearchHelper(AVLNode<T> *temp, T value);
+    AVLNode<T>* InsertHelper(AVLNode<T> *temp, T value);
+    AVLNode<T>* DeleteHelper(AVLNode<T> *temp, T value);
+    AVLNode<T>* RotateLeft(AVLNode<T> *temp);
+    AVLNode<T>* RotateRight(AVLNode<T> *temp);
+    AVLNode<T>* Balance(AVLNode<T> *temp);
 
-    void PrintInOrderTraversalHelper(std::ostream &, Node<T> *temp);
-    void PrintPreOrderTraversalHelper(std::ostream &, Node<T> *temp);
-    void PrintPostOrderTraversalHelper(std::ostream &, Node<T> *temp);
+    void PrintInOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
+    void PrintPreOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
+    void PrintPostOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
 
-    void DeallocMemory(Node<T> *temp);
+    void DeallocMemory(AVLNode<T> *temp);
 };
 
 template<typename T>
 AVLTree<T>::AVLTree() {
-    root = NIL = new Node<T>;
+    root = NIL = new AVLNode<T>;
     NIL->height = 0;
     NIL->left = NIL->right = nullptr;
 }
@@ -59,7 +59,7 @@ AVLTree<T>::~AVLTree() {
 }
 
 template<typename T>
-Node<T>* AVLTree<T>::SearchHelper(Node<T> *temp, T value) {
+AVLNode<T>* AVLTree<T>::SearchHelper(AVLNode<T> *temp, T value) {
     if (temp == NIL) {
         return nullptr;
     }
@@ -97,7 +97,7 @@ bool AVLTree<T>::Delete(T value) {
 
 template<typename T>
 T AVLTree<T>::Max() {
-    Node<T> *N = root;
+    AVLNode<T> *N = root;
     while (N->right != NIL) {
         N = N->right;
     }
@@ -106,7 +106,7 @@ T AVLTree<T>::Max() {
 
 template<typename T>
 T AVLTree<T>::Min() {
-    Node<T> *N = root;
+    AVLNode<T> *N = root;
     while (N->left != NIL) N = N->left;
     return N->value;
 }
@@ -127,13 +127,13 @@ void AVLTree<T>::PrintPostOrderTraversal(std::ostream &outputstream) {
 }
 
 template<typename T>
-void AVLTree<T>::GetHeight(Node<T> *N) {
+void AVLTree<T>::GetHeight(AVLNode<T> *N) {
     N->height = 1 + N->left->height > N->right->height ? N->left->height : N->right->height;
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::RotateLeft(Node<T> *temp) {
-    Node<T> *t = temp->left;
+AVLNode<T> *AVLTree<T>::RotateLeft(AVLNode<T> *temp) {
+    AVLNode<T> *t = temp->left;
     temp->left = t->right;
     t->right = temp;
     GetHeight(temp);
@@ -143,8 +143,8 @@ Node<T> *AVLTree<T>::RotateLeft(Node<T> *temp) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::RotateRight(Node<T> *temp) {
-    Node<T> *N = temp->right;
+AVLNode<T> *AVLTree<T>::RotateRight(AVLNode<T> *temp) {
+    AVLNode<T> *N = temp->right;
     temp->right = N->left;
     N->left = temp;
     GetHeight(temp);
@@ -154,9 +154,9 @@ Node<T> *AVLTree<T>::RotateRight(Node<T> *temp) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::InsertHelper(Node<T> *temp, T value) {
+AVLNode<T> *AVLTree<T>::InsertHelper(AVLNode<T> *temp, T value) {
     if (temp == NIL) {
-        temp = new Node<T>;
+        temp = new AVLNode<T>;
         temp->value = value;
         temp->left = temp->right = NIL;
         temp->height = 1;
@@ -174,8 +174,8 @@ Node<T> *AVLTree<T>::InsertHelper(Node<T> *temp, T value) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::DeleteHelper(Node<T> *temp, T value) {
-    Node<T> *t;
+AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *temp, T value) {
+    AVLNode<T> *t;
     if (temp == NIL) {
         return temp;
     }
@@ -206,7 +206,7 @@ Node<T> *AVLTree<T>::DeleteHelper(Node<T> *temp, T value) {
 }
 
 template<typename T>
-Node<T> *AVLTree<T>::Balance(Node<T> *temp) {
+AVLNode<T> *AVLTree<T>::Balance(AVLNode<T> *temp) {
     GetHeight(temp);
 
     if (temp->left->height > temp->right->height + 1) {
@@ -226,7 +226,7 @@ Node<T> *AVLTree<T>::Balance(Node<T> *temp) {
 }
 
 template<typename T>
-void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, Node<T> *temp) {
+void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
     if (temp == NIL) {
         return;
     }
@@ -236,7 +236,7 @@ void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, Node<T>
 }
 
 template<typename T>
-void AVLTree<T>::PrintPreOrderTraversalHelper(std::ostream &outputstream, Node<T> *temp) {
+void AVLTree<T>::PrintPreOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
     if (temp == NIL) {
         return;
     }
@@ -246,7 +246,7 @@ void AVLTree<T>::PrintPreOrderTraversalHelper(std::ostream &outputstream, Node<T
 }
 
 template<typename T>
-void AVLTree<T>::PrintPostOrderTraversalHelper(std::ostream &outputstream, Node<T> *temp) {
+void AVLTree<T>::PrintPostOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
     if (temp == NIL) {
         return;
     }
@@ -256,7 +256,7 @@ void AVLTree<T>::PrintPostOrderTraversalHelper(std::ostream &outputstream, Node<
 }
 
 template<typename T>
-void AVLTree<T>::DeallocMemory(Node<T> *temp) {
+void AVLTree<T>::DeallocMemory(AVLNode<T> *temp) {
     if (temp == NIL) {
         return;
     }

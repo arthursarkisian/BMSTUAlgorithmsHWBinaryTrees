@@ -8,6 +8,12 @@
 
 /Users/Arthur/ClionProjects/BinarTrees/AA/AATree.cpp
 
+/Users/Arthur/ClionProjects/BinarTrees/AA/AATree.hpp
+iostream
+-
+fstream
+-
+
 /Users/Arthur/ClionProjects/BinarTrees/AVL/AVLTree.cpp
 
 /Users/Arthur/ClionProjects/BinarTrees/AVL/AVLTree.hpp
@@ -27,4 +33,6 @@ ctime
 -
 AVL/AVLTree.hpp
 /Users/Arthur/ClionProjects/BinarTrees/AVL/AVLTree.hpp
+AA/AATree.hpp
+/Users/Arthur/ClionProjects/BinarTrees/AA/AATree.hpp
 
