@@ -1,0 +1,3 @@
+/Users/Arthur/ClionProjects/BinarTrees/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/Arthur/ClionProjects/BinarTrees/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/Arthur/ClionProjects/BinarTrees/cmake-build-debug/CMakeFiles/BinarTrees.dir
