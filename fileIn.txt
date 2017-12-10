@@ -1,0 +1,11 @@
+add 10
+add 3
+add 256
+print
+delete 3
+add 12
+add 43
+delete
+print
+min
+max

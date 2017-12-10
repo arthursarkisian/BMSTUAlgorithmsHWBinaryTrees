@@ -14,13 +14,13 @@ public:
     AVLTree();
     ~AVLTree();
 
-    void Insert(T value);
-    void Delete(T value);
+    bool Insert(T value);
+    bool Delete(T value);
 
     T Max();
     T Min();
 
-    Node<T>* Search(T value);
+    bool Search(T value);
 
     void PrintInOrderTraversal(std::ostream &);
     void PrintPreOrderTraversal(std::ostream &);
@@ -59,18 +59,40 @@ AVLTree<T>::~AVLTree() {
 }
 
 template<typename T>
-Node<T>* AVLTree<T>::Search(T value) {
-    return SearchHelper(root, value);
+Node<T>* AVLTree<T>::SearchHelper(Node<T> *temp, T value) {
+    if (temp == NIL) {
+        return nullptr;
+    }
+
+    if (temp->value == value) {
+        return temp;
+    }
+
+    if (value < temp->value) {
+        return SearchHelper(temp->left, value);
+    } else {
+        return SearchHelper(temp->right, value);
+    }
 }
 
 template<typename T>
-void AVLTree<T>::Insert(T value) {
+bool AVLTree<T>::Search(T value) {
+    return SearchHelper(root, value) != nullptr;
+}
+
+template<typename T>
+bool AVLTree<T>::Insert(T value) {
     root = InsertHelper(root, value);
+    return true;
 }
 
 template<typename T>
-void AVLTree<T>::Delete(T value) {
-    root = DeleteHelper(root, value);
+bool AVLTree<T>::Delete(T value) {
+    if (Search(value)) {
+        root = DeleteHelper(root, value);
+        return true;
+    }
+    return false;
 }
 
 template<typename T>
@@ -102,23 +124,6 @@ void AVLTree<T>::PrintPreOrderTraversal(std::ostream &outputstream) {
 template<typename T>
 void AVLTree<T>::PrintPostOrderTraversal(std::ostream &outputstream) {
     PrintPostOrderTraversalHelper(outputstream, root);
-}
-
-template<typename T>
-Node<T>* AVLTree<T>::SearchHelper(Node<T> *temp, T value) {
-    if (temp == NIL) {
-        return false;
-    }
-
-    if (temp->value == value) {
-        return temp;
-    }
-
-    if (value < temp->value) {
-        return SearchHelper(temp->left, value);
-    } else {
-        return SearchHelper(temp->right, value);
-    }
 }
 
 template<typename T>
