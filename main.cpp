@@ -111,15 +111,15 @@ int main(int argc, char *argv[]) {
 
     std::cout << "runtime = " << clock()/1000.0 << std::endl;
 
-    fileIn.close();
-    fileOut.close();
-
     if (FileIsEqual(argv[2], argv[3])) {
         std::cout << "Correct" << std::endl;
     } else {
         std::cout << "Not correct" << std::endl;
     }
 
+
+    fileIn.clear();
+    fileIn.seekg(0);
 
     //AA tree tests
 
@@ -138,6 +138,7 @@ int main(int argc, char *argv[]) {
             }
         }
         if (line == "print") {
+            std::cout << "Lol" << std::endl;
             aaTree.PrintInOrderTraversal(fileOut);
             fileOut << std::endl;
         }
@@ -175,6 +176,9 @@ int main(int argc, char *argv[]) {
     } else {
         std::cout << "Not correct" << std::endl;
     }
+
+    fileIn.close();
+    fileOut.close();
 
     return 0;
 
