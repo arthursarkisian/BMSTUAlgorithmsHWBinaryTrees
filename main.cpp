@@ -120,6 +120,8 @@ int main(int argc, char *argv[]) {
 
     fileIn.clear();
     fileIn.seekg(0);
+    fileOut.clear();
+    fileOut.seekp(0);
 
     //AA tree tests
 
@@ -138,7 +140,6 @@ int main(int argc, char *argv[]) {
             }
         }
         if (line == "print") {
-            std::cout << "Lol" << std::endl;
             aaTree.PrintInOrderTraversal(fileOut);
             fileOut << std::endl;
         }
@@ -181,5 +182,4 @@ int main(int argc, char *argv[]) {
     fileOut.close();
 
     return 0;
-
 }
