@@ -207,31 +207,5 @@ int main(int argc, char *argv[]) {
     fileIn.close();
     fileOut.close();
 
-
-
-
-//    AATree<int> aaTree;
-//    aaTree.Insert(1, 2);
-//    aaTree.Insert(2, 148);
-//    aaTree.Insert(3, 45);
-//    aaTree.Insert(4, 32);
-//    aaTree.Insert(5, 16);
-//    aaTree.Insert(6, 31);
-//    aaTree.Insert(7, 8);
-//    aaTree.Insert(8, 5);
-//    aaTree.Insert(9, 3);
-//    aaTree.PrintInOrderTraversal(std::cout);
-//    std::cout << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(1, 2) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(2, 148) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(3, 45) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(4, 32) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(6, 16) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(6, 31) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(7, 8) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(8, 5) << std::endl;
-//    std::cout << std::boolalpha << aaTree.Search(9, 3) << std::endl;
-
-
     return 0;
 }
