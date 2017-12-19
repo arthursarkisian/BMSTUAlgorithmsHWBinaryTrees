@@ -1,0 +1,59 @@
+add 0 1
+add 1 4
+add 2 45
+add 3 56
+add 4 34
+print
+add 5 65
+add 6 43
+add
+add 7 9
+add 8 4
+print
+add 9 6
+add 10 67
+add 11 23
+add 12 123
+add 13 67
+print
+add 14 98
+add 15 76
+add 16 12
+add 17 10
+add 18 3
+print
+add 19 40
+add 20 7
+add 21 50
+add 22 21
+add 23 7
+print
+delete 0 1
+delete 1 4
+delete 2 45
+delete 3 56
+delete 4 34
+print
+delete 5 65
+delete 6 43
+delete 4 34
+delete 7 9
+delete 8 4
+print
+delete
+delete 10 67
+delete 11 23
+delete 12 123
+delete 13 67
+print
+delete 14 98
+delete 15 76
+delete
+delete 17 10
+delete 18 3
+print
+delete 19 40
+delete 20 7
+delete 21 50
+delete 22 21
+delete 23 7

@@ -1,0 +1,56 @@
+add 1 2
+add 2 148
+add 3 45
+add 4 32
+add 5 16
+add 6 31
+add 7 8
+add 8 5
+add 9 3
+add 10 256
+search 9 3
+search 0 0
+search 2 148
+search 5 16
+search 5 123
+search 8 5
+search 1 2
+search 7 8
+search 6 31
+search 9 87
+delete 4 32
+add 11 11
+search 56
+search 6 31
+search 3 45
+search 140
+search 2 148
+search 11 11
+search 3 45
+search 6 31
+search 5 16
+search 1000
+add 13 34
+add 9
+search 4 32
+search 5 16
+search 3 45
+search 9
+search 2 148
+search 7 8
+search 6 31
+search 3 45
+search 9 3
+search 19 45
+delete 13 34
+delete 8 5
+search 13 34
+search 13 34
+search 5 16
+search 7 8
+search 10 256
+search 43 67
+search 6 54
+search 11 11
+search 3 45
+search 9 3

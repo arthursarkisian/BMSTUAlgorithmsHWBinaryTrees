@@ -1,0 +1,51 @@
+add 1 7
+print
+add 2 0
+print
+min
+max
+add 3 10
+add 4 3
+print
+min
+max
+add 5 34
+add 6 65
+print
+min
+max
+add 7 43
+add 8 32
+print
+min
+max
+add 9 9
+add 10 4
+print
+min
+max
+add 11 6
+add 12 67
+print
+min
+max
+add 13 23
+add 14 123
+print
+min
+max
+add 15 68
+add 16 98
+print
+min
+max
+add 17 76
+add 18 12
+print
+min
+max
+add 19 1
+add 20 56
+print
+min
+max
