@@ -21,6 +21,12 @@ bool LineIsOk(const std::string &str, const std::string &command) {
     if (tmp.empty()) {
         return false;
     }
+    tmp.clear();
+    iss >> tmp;
+
+    if (tmp.empty()) {
+        return false;
+    }
 
     tmp.clear();
     iss >> tmp;
@@ -28,9 +34,21 @@ bool LineIsOk(const std::string &str, const std::string &command) {
     return tmp.empty();
 }
 
+int FindKey(const std::string &str) {
+    std::istringstream iss(str);
+    std::string tmp;
+    iss >> tmp;
+    tmp.clear();
+    iss >> tmp;
+    int key = atoi(tmp.c_str());
+    return key;
+}
+
 int FindValue(const std::string &str) {
     std::istringstream iss(str);
     std::string tmp;
+    iss >> tmp;
+    tmp.clear();
     iss >> tmp;
     tmp.clear();
     iss >> tmp;
@@ -70,8 +88,10 @@ int main(int argc, char *argv[]) {
     while (getline(fileIn, line)) {
         if (line.find("delete") == 0) {
             if (LineIsOk(line, "delete")) {
-                if (!avlTree.Delete(FindValue(line))) {
+                if (!avlTree.Delete(FindKey(line), FindValue(line))) {
                     fileOut << "error" << std::endl;
+                } else {
+                    fileOut << "Ok" << std::endl;
                 }
             } else {
                 fileOut << "error" << std::endl;
@@ -83,15 +103,17 @@ int main(int argc, char *argv[]) {
         }
         if (line.find("add") == 0) {
             if (LineIsOk(line, "add") != 0) {
-                avlTree.Insert(FindValue(line));
+                avlTree.Insert(FindKey(line), FindValue(line));
             } else {
                 fileOut << "error" << std::endl;
             }
         }
         if (line.find("search") == 0) {
             if (LineIsOk(line, "search") != 0) {
-                if (!avlTree.Search(FindValue(line))) {
+                if (!avlTree.Search(FindKey(line), FindValue(line))) {
                     fileOut << "error" << std::endl;
+                } else {
+                    fileOut << "Ok" << std::endl;
                 }
 
             } else {
@@ -132,8 +154,10 @@ int main(int argc, char *argv[]) {
     while (getline(fileIn, line)) {
         if (line.find("delete") == 0) {
             if (LineIsOk(line, "delete")) {
-                if (!aaTree.Delete(FindValue(line))) {
+                if (!aaTree.Delete(FindKey(line), FindValue(line))) {
                     fileOut << "error" << std::endl;
+                } else {
+                    fileOut << "Ok" << std::endl;
                 }
             } else {
                 fileOut << "error" << std::endl;
@@ -145,15 +169,17 @@ int main(int argc, char *argv[]) {
         }
         if (line.find("add") == 0) {
             if (LineIsOk(line, "add") != 0) {
-                aaTree.Insert(FindValue(line));
+                aaTree.Insert(FindKey(line), FindValue(line));
             } else {
                 fileOut << "error" << std::endl;
             }
         }
         if (line.find("search") == 0) {
             if (LineIsOk(line, "search") != 0) {
-                if (!aaTree.Search(FindValue(line))) {
+                if (!aaTree.Search(FindKey(line), FindValue(line))) {
                     fileOut << "error" << std::endl;
+                } else {
+                    fileOut << "Ok" << std::endl;
                 }
             } else {
                 fileOut << "error" << std::endl;
@@ -180,6 +206,32 @@ int main(int argc, char *argv[]) {
 
     fileIn.close();
     fileOut.close();
+
+
+
+
+//    AATree<int> aaTree;
+//    aaTree.Insert(1, 2);
+//    aaTree.Insert(2, 148);
+//    aaTree.Insert(3, 45);
+//    aaTree.Insert(4, 32);
+//    aaTree.Insert(5, 16);
+//    aaTree.Insert(6, 31);
+//    aaTree.Insert(7, 8);
+//    aaTree.Insert(8, 5);
+//    aaTree.Insert(9, 3);
+//    aaTree.PrintInOrderTraversal(std::cout);
+//    std::cout << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(1, 2) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(2, 148) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(3, 45) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(4, 32) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(6, 16) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(6, 31) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(7, 8) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(8, 5) << std::endl;
+//    std::cout << std::boolalpha << aaTree.Search(9, 3) << std::endl;
+
 
     return 0;
 }

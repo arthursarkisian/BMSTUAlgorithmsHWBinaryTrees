@@ -1,4 +1,3 @@
-//#include "AATree.hpp"
 #include <iostream>
 #include <fstream>
 
@@ -6,6 +5,7 @@ template <class T>
 struct AANode {
     int count, level;
     T key;
+    T value;
     AANode *right;
     AANode *left;
     AANode *parent;
@@ -17,12 +17,12 @@ public:
     AATree();
     ~AATree();
 
-    T Insert(T);
-    bool Delete(T);
+    T Insert(T, T);
+    bool Delete(T, T);
 
     T Min();
     T Max();
-    bool Search(T value);
+    bool Search(T key, T value);
     void PrintInOrderTraversal(std::ostream &outputstream);
 private:
     AANode<T> *root;
@@ -33,8 +33,8 @@ private:
     bool Split(AANode<T> *);
     void PrintInOrderTraversalHelper(std::ostream &, AANode<T> *);
     AANode<T> *InsertHelper(AANode<T> *, AANode<T> *);
-    AANode<T> *SearchHelper(AANode<T> *, T);
-    bool DeleteHelper(AANode<T> *, AANode<T> *, T);
+    AANode<T> *SearchHelper(AANode<T> *, T, T);
+    bool DeleteHelper(AANode<T> *, AANode<T> *, T, T);
 };
 
 template <class T>
@@ -69,7 +69,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
 
         return root;
     }
-    if (ins->key < temp->key) {
+    if (ins->value <= temp->value && ins->key != temp->key) {
         if (temp->left) {
             return InsertHelper(temp->left, ins);
         }
@@ -80,7 +80,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
 
         return ins;
     }
-    if (ins->key > temp->key) {
+    if (ins->value > temp->value || ins->key != temp->key) {
         if (temp->right) {
             return InsertHelper(temp->right, ins);
         }
@@ -98,9 +98,10 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
 }
 
 template <class T>
-T AATree<T>::Insert(T value) {
+T AATree<T>::Insert(T key, T value) {
     AANode<T> *temp = new AANode<T>;
-    temp->key = value;
+    temp->key = key;
+    temp->value = value;
     temp->level = 1;
     temp->count = 0;
     temp->left = nullptr;
@@ -111,11 +112,11 @@ T AATree<T>::Insert(T value) {
 }
 
 template <class T>
-bool AATree<T>::DeleteHelper(AANode<T> *parent, AANode<T> *current, T value) {
+bool AATree<T>::DeleteHelper(AANode<T> *parent, AANode<T> *current, T key, T value) {
     if (!current) {
         return false;
     }
-    if (current->key == value) {
+    if (current->value == value && current->key == key) {
         if (current->left == nullptr || current->right == nullptr) {
             AANode<T>* temp = current->left;
             if (current->right) {
@@ -135,21 +136,27 @@ bool AATree<T>::DeleteHelper(AANode<T> *parent, AANode<T> *current, T value) {
             while (validSubs->left) {
                 validSubs = validSubs->left;
             }
-            T temp = current->key;
+            T tempKey = current->key;
+            T tempValue = current->value;
+
             current->key = validSubs->key;
-            validSubs->key = temp;
-            return DeleteHelper(current, current->right, temp);
+            current->value = validSubs->value;
+
+            validSubs->key= tempKey;
+            validSubs->value = tempValue;
+
+            return DeleteHelper(current, current->right, tempKey, tempValue);
         }
         delete current;
         return true;
     }
-    return DeleteHelper(current, current->left, value) ||
-           DeleteHelper(current, current->right, value);
+    return DeleteHelper(current, current->left, key, value) ||
+           DeleteHelper(current, current->right, key, value);
 }
 
 template <class T>
-bool AATree<T>::Delete(T value) {
-    return this->DeleteHelper(nullptr, root, value);
+bool AATree<T>::Delete(T key, T value) {
+    return this->DeleteHelper(nullptr, root, key, value);
 }
 
 template <class T>
@@ -222,7 +229,8 @@ void AATree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, AANode<T
         return;
     }
     PrintInOrderTraversalHelper(outputstream, temp->left);
-    outputstream << temp->key << " ";
+    outputstream << temp->value << " ";
+//    outputstream << "Key: " << temp->key << " Value: " << temp->value << std::endl;
     PrintInOrderTraversalHelper(outputstream, temp->right);
 }
 
@@ -237,7 +245,7 @@ T AATree<T>::Min() {
     while (N->left != nullptr) {
         N = N->left;
     }
-    return N->key;
+    return N->value;
 }
 
 template <class T>
@@ -246,29 +254,29 @@ T AATree<T>::Max() {
     while (N->right != nullptr) {
         N = N->right;
     }
-    return N->key;
+    return N->value;
 }
 
 template <class T>
-AANode<T> *AATree<T>::SearchHelper(AANode<T> *temp, T value) {
+AANode<T> *AATree<T>::SearchHelper(AANode<T> *temp, T key, T value) {
     if (temp == nullptr) {
         return nullptr;
     }
 
-    if (value == temp->key) {
+    if (value == temp->value && key == temp->key) {
         return temp;
     }
-    else if (value < temp->key) {
-        return SearchHelper(temp->left, value);
+    else if (value < temp->value && key != temp->key) {
+        return SearchHelper(temp->left, key, value);
     }
-    else if (value > temp->key) {
-        return SearchHelper(temp->right, value);
+    else if (value > temp->value) {
+        return SearchHelper(temp->right, key, value);
     } else {
         return nullptr;
     }
 }
 
 template <class T>
-bool AATree<T>::Search(T value) {
-    return SearchHelper(root, value) != nullptr;
+bool AATree<T>::Search(T key, T value) {
+    return SearchHelper(root, key, value) != nullptr;
 }
