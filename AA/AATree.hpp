@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <stack>
 
 template <class T>
 struct AANode {
@@ -18,7 +19,9 @@ public:
     ~AATree();
 
     T Insert(T, T);
-    bool Delete(T, T);
+    bool Delete(T);
+
+    T SearchValue(T);
 
     T Min();
     T Max();
@@ -27,6 +30,7 @@ public:
 private:
     AANode<T> *root;
 
+    T SearchValueHelper(AANode<T> *, T);
     void DeallocMemory(AANode<T> *N);
     void Skew(AANode<T> *);
     void Rebal(AANode<T> *);
@@ -155,7 +159,8 @@ bool AATree<T>::DeleteHelper(AANode<T> *parent, AANode<T> *current, T key, T val
 }
 
 template <class T>
-bool AATree<T>::Delete(T key, T value) {
+bool AATree<T>::Delete(T key) {
+    T value = SearchValue(key);
     return this->DeleteHelper(nullptr, root, key, value);
 }
 
@@ -279,4 +284,33 @@ AANode<T> *AATree<T>::SearchHelper(AANode<T> *temp, T key, T value) {
 template <class T>
 bool AATree<T>::Search(T key, T value) {
     return SearchHelper(root, key, value) != nullptr;
+}
+
+template <class T>
+T AATree<T>::SearchValue(T key) {
+    return SearchValueHelper(root, key);
+}
+
+template <class T>
+T AATree<T>::SearchValueHelper(AANode<T> *temp, T key) {
+    std::stack<AANode<T>*> stack;
+
+    while (true) {
+        if (temp) {
+            stack.push(temp);
+            temp = temp->left;
+        } else {
+            if (!stack.empty()) {
+                temp = stack.top();
+                stack.pop();
+                if (temp->key == key) {
+                    return temp->value;
+                }
+                temp = temp->right;
+            } else {
+                break;
+            }
+        }
+    }
+    return 0;
 }

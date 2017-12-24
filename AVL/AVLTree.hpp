@@ -1,4 +1,5 @@
 #include<iostream>
+#include <stack>
 
 template<class T>
 struct AVLNode {
@@ -16,12 +17,14 @@ public:
     ~AVLTree();
 
     bool Insert(T key, T value);
-    bool Delete(T key, T value);
+    bool Delete(T key);
 
     T Max();
     T Min();
 
     bool Search(T key, T value);
+
+    T SearchValue(T key);
 
     void PrintInOrderTraversal(std::ostream &);
     void PrintPreOrderTraversal(std::ostream &);
@@ -32,6 +35,7 @@ private:
     AVLNode<T> *NIL;
 
     void GetHeight(AVLNode<T> *N);
+    T SearchValueHelper(AVLNode<T> *temp, T key);
 
     AVLNode<T>* SearchHelper(AVLNode<T> *temp, T key, T value);
     AVLNode<T>* InsertHelper(AVLNode<T> *temp, T key, T value);
@@ -142,7 +146,8 @@ AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *temp, T key, T value) {
 }
 
 template<typename T>
-bool AVLTree<T>::Delete(T key, T value) {
+bool AVLTree<T>::Delete(T key) {
+    T value = SearchValue(key);
     if (Search(key, value)) {
         root = DeleteHelper(root, key, value);
         return true;
@@ -269,4 +274,33 @@ void AVLTree<T>::DeallocMemory(AVLNode<T> *temp) {
     DeallocMemory(temp->left);
     DeallocMemory(temp->right);
     delete temp;
+}
+
+template<typename T>
+T AVLTree<T>::SearchValue(T key) {
+    return SearchValueHelper(root, key);
+}
+
+template<typename T>
+T AVLTree<T>::SearchValueHelper(AVLNode<T> *temp, T key) {
+    std::stack<AVLNode<T>*> stack;
+
+    while (true) {
+        if (temp) {
+            stack.push(temp);
+            temp = temp->left;
+        } else {
+            if (!stack.empty()) {
+                temp = stack.top();
+                stack.pop();
+                if (temp->key == key) {
+                    return temp->value;
+                }
+                temp = temp->right;
+            } else {
+                break;
+            }
+        }
+    }
+    return 0;
 }

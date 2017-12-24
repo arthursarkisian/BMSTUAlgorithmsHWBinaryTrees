@@ -7,7 +7,7 @@
 #include "AVL/AVLTree.hpp"
 #include "AA/AATree.hpp"
 
-bool LineIsOk(const std::string &str, const std::string &command) {
+bool LineIsOkKeyValue(const std::string &str, const std::string &command) {
     std::istringstream iss(str);
     std::string tmp;
 
@@ -19,6 +19,27 @@ bool LineIsOk(const std::string &str, const std::string &command) {
     iss >> tmp;
 
     if (tmp.empty()) {
+        return false;
+    }
+    tmp.clear();
+    iss >> tmp;
+
+    if (tmp.empty()) {
+        return false;
+    }
+
+    tmp.clear();
+    iss >> tmp;
+
+    return tmp.empty();
+}
+
+bool LineIsOkKey(const std::string &str, const std::string &command) {
+    std::istringstream iss(str);
+    std::string tmp;
+
+    iss >> tmp;
+    if (tmp != command) {
         return false;
     }
     tmp.clear();
@@ -87,8 +108,8 @@ int main(int argc, char *argv[]) {
 
     while (getline(fileIn, line)) {
         if (line.find("delete") == 0) {
-            if (LineIsOk(line, "delete")) {
-                if (!avlTree.Delete(FindKey(line), FindValue(line))) {
+            if (LineIsOkKey(line, "delete")) {
+                if (!avlTree.Delete(FindKey(line))) {
                     fileOut << "error" << std::endl;
                 } else {
                     fileOut << "Ok" << std::endl;
@@ -102,20 +123,15 @@ int main(int argc, char *argv[]) {
             fileOut << std::endl;
         }
         if (line.find("add") == 0) {
-            if (LineIsOk(line, "add") != 0) {
+            if (LineIsOkKeyValue(line, "add") != 0) {
                 avlTree.Insert(FindKey(line), FindValue(line));
             } else {
                 fileOut << "error" << std::endl;
             }
         }
         if (line.find("search") == 0) {
-            if (LineIsOk(line, "search") != 0) {
-                if (!avlTree.Search(FindKey(line), FindValue(line))) {
-                    fileOut << "error" << std::endl;
-                } else {
-                    fileOut << "Ok" << std::endl;
-                }
-
+            if (LineIsOkKey(line, "search") != 0) {
+                fileOut << avlTree.SearchValue(FindKey(line)) << std::endl;
             } else {
                 fileOut << "error" << std::endl;
             }
@@ -153,8 +169,8 @@ int main(int argc, char *argv[]) {
 
     while (getline(fileIn, line)) {
         if (line.find("delete") == 0) {
-            if (LineIsOk(line, "delete")) {
-                if (!aaTree.Delete(FindKey(line), FindValue(line))) {
+            if (LineIsOkKey(line, "delete")) {
+                if (!aaTree.Delete(FindKey(line))) {
                     fileOut << "error" << std::endl;
                 } else {
                     fileOut << "Ok" << std::endl;
@@ -168,19 +184,15 @@ int main(int argc, char *argv[]) {
             fileOut << std::endl;
         }
         if (line.find("add") == 0) {
-            if (LineIsOk(line, "add") != 0) {
+            if (LineIsOkKeyValue(line, "add") != 0) {
                 aaTree.Insert(FindKey(line), FindValue(line));
             } else {
                 fileOut << "error" << std::endl;
             }
         }
         if (line.find("search") == 0) {
-            if (LineIsOk(line, "search") != 0) {
-                if (!aaTree.Search(FindKey(line), FindValue(line))) {
-                    fileOut << "error" << std::endl;
-                } else {
-                    fileOut << "Ok" << std::endl;
-                }
+            if (LineIsOkKey(line, "search") != 0) {
+                fileOut << aaTree.SearchValue(FindKey(line)) << std::endl;
             } else {
                 fileOut << "error" << std::endl;
             }
