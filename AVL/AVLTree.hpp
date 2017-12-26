@@ -34,6 +34,7 @@ private:
     void GetHeight(AVLNode<T> *N);
 
     T SearchHelper(AVLNode<T> *temp, T key);
+    AVLNode<T>* Has(AVLNode<T> *temp, T key);
     AVLNode<T>* InsertHelper(AVLNode<T> *temp, T key, T value);
     AVLNode<T>* DeleteHelper(AVLNode<T> *temp, T key);
     AVLNode<T>* RotateLeft(AVLNode<T> *temp);
@@ -83,7 +84,7 @@ T AVLTree<T>::Search(T key) {
 
 template<typename T>
 bool AVLTree<T>::Delete(T key) {
-    if (Search(key)) {
+    if (Has(root, key)) {
         root = DeleteHelper(root, key);
         return true;
     }
@@ -265,4 +266,21 @@ void AVLTree<T>::DeallocMemory(AVLNode<T> *temp) {
     DeallocMemory(temp->left);
     DeallocMemory(temp->right);
     delete temp;
+}
+
+template<typename T>
+AVLNode<T> *AVLTree<T>::Has(AVLNode<T> *temp, T key) {
+    if (temp == NIL) {
+        return nullptr;
+    }
+
+    if (temp->key == key) {
+        return temp;
+    }
+
+    if (key < temp->key) {
+        return SearchHelper(temp->left, key);
+    } else {
+        return SearchHelper(temp->right, key);
+    }
 }
