@@ -131,7 +131,7 @@ int main(int argc, char *argv[]) {
         }
         if (line.find("search") == 0) {
             if (LineIsOkKey(line, "search") != 0) {
-                fileOut << avlTree.SearchValue(FindKey(line)) << std::endl;
+                fileOut << avlTree.Search(FindKey(line)) << std::endl;
             } else {
                 fileOut << "error" << std::endl;
             }
@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
         }
         if (line.find("search") == 0) {
             if (LineIsOkKey(line, "search") != 0) {
-                fileOut << aaTree.SearchValue(FindKey(line)) << std::endl;
+                fileOut << aaTree.Search(FindKey(line)) << std::endl;
             } else {
                 fileOut << "error" << std::endl;
             }
@@ -218,6 +218,6 @@ int main(int argc, char *argv[]) {
 
     fileIn.close();
     fileOut.close();
-
+    
     return 0;
 }

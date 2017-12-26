@@ -1,10 +1,9 @@
 #include<iostream>
-#include <stack>
 
 template<class T>
 struct AVLNode {
-    T value;
     T key;
+    T value;
     int height;
     AVLNode *left;
     AVLNode *right;
@@ -16,15 +15,13 @@ public:
     AVLTree();
     ~AVLTree();
 
-    bool Insert(T key, T value);
+    bool Insert(T, T);
     bool Delete(T key);
 
     T Max();
     T Min();
 
-    bool Search(T key, T value);
-
-    T SearchValue(T key);
+    T Search(T key);
 
     void PrintInOrderTraversal(std::ostream &);
     void PrintPreOrderTraversal(std::ostream &);
@@ -35,11 +32,10 @@ private:
     AVLNode<T> *NIL;
 
     void GetHeight(AVLNode<T> *N);
-    T SearchValueHelper(AVLNode<T> *temp, T key);
 
-    AVLNode<T>* SearchHelper(AVLNode<T> *temp, T key, T value);
+    T SearchHelper(AVLNode<T> *temp, T key);
     AVLNode<T>* InsertHelper(AVLNode<T> *temp, T key, T value);
-    AVLNode<T>* DeleteHelper(AVLNode<T> *temp, T key, T value);
+    AVLNode<T>* DeleteHelper(AVLNode<T> *temp, T key);
     AVLNode<T>* RotateLeft(AVLNode<T> *temp);
     AVLNode<T>* RotateRight(AVLNode<T> *temp);
     AVLNode<T>* Balance(AVLNode<T> *temp);
@@ -64,92 +60,31 @@ AVLTree<T>::~AVLTree() {
 }
 
 template<typename T>
-AVLNode<T>* AVLTree<T>::SearchHelper(AVLNode<T> *temp, T key, T value) {
+T AVLTree<T>::SearchHelper(AVLNode<T> *temp, T key) {
     if (temp == NIL) {
-        return nullptr;
+        return 0;
     }
 
-    if (temp->value == value && temp->key == key) {
-        return temp;
+    if (temp->key == key) {
+        return temp->value;
     }
 
-    if (value <= temp->value && temp->key != key) {
-        return SearchHelper(temp->left, key, value);
+    if (key < temp->key) {
+        return SearchHelper(temp->left, key);
     } else {
-        return SearchHelper(temp->right, key, value);
+        return SearchHelper(temp->right, key);
     }
 }
 
 template<typename T>
-bool AVLTree<T>::Search(T key, T value) {
-    return SearchHelper(root, key, value) != nullptr;
-}
-
-template<typename T>
-AVLNode<T> *AVLTree<T>::InsertHelper(AVLNode<T> *temp, T key, T value) {
-    if (temp == NIL) {
-        temp = new AVLNode<T>;
-        temp->key = key;
-        temp->value = value;
-        temp->left = temp->right = NIL;
-        temp->height = 1;
-
-        return temp;
-    }
-
-    if (value <= temp->value) {
-        temp->left = InsertHelper(temp->left, key, value);
-    } else {
-        temp->right = InsertHelper(temp->right, key, value);
-    }
-
-    return Balance(temp);
-}
-
-template<typename T>
-bool AVLTree<T>::Insert(T key, T value) {
-    root = InsertHelper(root, key, value);
-    return true;
-}
-
-template<typename T>
-AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *temp, T key, T value) {
-    AVLNode<T> *t;
-    if (temp == NIL) {
-        return temp;
-    }
-    if (temp->value == value && temp->key == key) {
-        if (temp->left == NIL || temp->right == NIL) {
-            if (temp->left == NIL) {
-                t = temp->right;
-            } else {
-                t = temp->left;
-            }
-            delete temp;
-            return t;
-        } else {
-            for (t = temp->right; t->left != NIL; t = t->left);
-            temp->value = t->value;
-            temp->key = t->key;
-            temp->right = DeleteHelper(temp->right, t->key, t->value);
-            return Balance(temp);
-        }
-    }
-
-    if (value <= temp->value && key != temp->key) {
-        temp->left = DeleteHelper(temp->left, key, value);
-    } else {
-        temp->right = DeleteHelper(temp->right, key, value);
-    }
-
-    return Balance(temp);
+T AVLTree<T>::Search(T key) {
+    return SearchHelper(root, key);
 }
 
 template<typename T>
 bool AVLTree<T>::Delete(T key) {
-    T value = SearchValue(key);
-    if (Search(key, value)) {
-        root = DeleteHelper(root, key, value);
+    if (Search(key)) {
+        root = DeleteHelper(root, key);
         return true;
     }
     return false;
@@ -213,7 +148,64 @@ AVLNode<T> *AVLTree<T>::RotateRight(AVLNode<T> *temp) {
     return N;
 }
 
+template<typename T>
+AVLNode<T> *AVLTree<T>::InsertHelper(AVLNode<T> *temp, T key, T value) {
+    if (temp == NIL) {
+        temp = new AVLNode<T>;
+        temp->key = key;
+        temp->value = value;
+        temp->left = temp->right = NIL;
+        temp->height = 1;
 
+        return temp;
+    }
+
+    if (key <= temp->key) {
+        temp->left = InsertHelper(temp->left, key, value);
+    } else {
+        temp->right = InsertHelper(temp->right, key, value);
+    }
+
+    return Balance(temp);
+}
+
+template<typename T>
+bool AVLTree<T>::Insert(T key, T value) {
+    root = InsertHelper(root, key, value);
+    return true;
+}
+
+template<typename T>
+AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *temp, T key) {
+    AVLNode<T> *t;
+    if (temp == NIL) {
+        return temp;
+    }
+    if (temp->key == key) {
+        if (temp->left == NIL || temp->right == NIL) {
+            if (temp->left == NIL) {
+                t = temp->right;
+            } else {
+                t = temp->left;
+            }
+            delete temp;
+            return t;
+        } else {
+            for (t = temp->right; t->left != NIL; t = t->left);
+            temp->key = t->key;
+            temp->right = DeleteHelper(temp->right, t->key);
+            return Balance(temp);
+        }
+    }
+
+    if (key < temp->key) {
+        temp->left = DeleteHelper(temp->left, key);
+    } else {
+        temp->right = DeleteHelper(temp->right, key);
+    }
+
+    return Balance(temp);
+}
 
 template<typename T>
 AVLNode<T> *AVLTree<T>::Balance(AVLNode<T> *temp) {
@@ -242,7 +234,6 @@ void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, AVLNode
     }
     PrintInOrderTraversalHelper(outputstream, temp->left);
     outputstream << temp->value << " ";
-//    outputstream << "Key: " << temp->key << " Value:" << temp->value << std::endl;
     PrintInOrderTraversalHelper(outputstream, temp->right);
 }
 
@@ -274,33 +265,4 @@ void AVLTree<T>::DeallocMemory(AVLNode<T> *temp) {
     DeallocMemory(temp->left);
     DeallocMemory(temp->right);
     delete temp;
-}
-
-template<typename T>
-T AVLTree<T>::SearchValue(T key) {
-    return SearchValueHelper(root, key);
-}
-
-template<typename T>
-T AVLTree<T>::SearchValueHelper(AVLNode<T> *temp, T key) {
-    std::stack<AVLNode<T>*> stack;
-
-    while (true) {
-        if (temp) {
-            stack.push(temp);
-            temp = temp->left;
-        } else {
-            if (!stack.empty()) {
-                temp = stack.top();
-                stack.pop();
-                if (temp->key == key) {
-                    return temp->value;
-                }
-                temp = temp->right;
-            } else {
-                break;
-            }
-        }
-    }
-    return 0;
 }
