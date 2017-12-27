@@ -4,7 +4,8 @@
 
 template <class T>
 struct AANode {
-    int count, level;
+    int count;
+    int level;
     T key;
     T value;
     AANode *right;
