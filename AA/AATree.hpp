@@ -30,7 +30,7 @@ private:
 
     void DeallocMemory(AANode<T> *N);
     void Skew(AANode<T> *);
-    void Rebal(AANode<T> *);
+    void Balance(AANode<T> *);
     bool Split(AANode<T> *);
     void PrintInOrderTraversalHelper(std::ostream &, AANode<T> *);
     AANode<T> *InsertHelper(AANode<T> *, AANode<T> *);
@@ -77,7 +77,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         temp->left = ins;
         ins->parent = temp;
         ins->count = 1;
-        Rebal(ins);
+        Balance(ins);
 
         return ins;
     }
@@ -88,7 +88,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         temp->right = ins;
         ins->parent = temp;
         ins->count = 1;
-        Rebal(ins);
+        Balance(ins);
 
         return ins;
     }
@@ -196,7 +196,7 @@ bool AATree<T>::Split(AANode<T> *temp)
 }
 
 template <class T>
-void AATree<T>::Rebal(AANode<T> *temp) {
+void AATree<T>::Balance(AANode<T> *temp) {
     temp->left = nullptr;
     temp->right = nullptr;
     temp->level = 1;
