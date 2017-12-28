@@ -218,6 +218,6 @@ int main(int argc, char *argv[]) {
 
     fileIn.close();
     fileOut.close();
-    
+
     return 0;
 }
