@@ -4,7 +4,7 @@
 
 template <class T>
 struct AANode {
-    int count, level;
+    int level;
     T key;
     T value;
     AANode *right;
@@ -18,7 +18,7 @@ public:
     AATree();
     ~AATree();
 
-    T Insert(T, T);
+    void Insert(T, T);
     bool Delete(T);
 
     T Min();
@@ -62,7 +62,6 @@ AATree<T>::~AATree() {
 template <class T>
 AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
     if (root == nullptr) {
-        ins->count = 1;
         ins->parent = nullptr;
         ins->left = nullptr;
         ins->right = nullptr;
@@ -76,7 +75,6 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         }
         temp->left = ins;
         ins->parent = temp;
-        ins->count = 1;
         Rebal(ins);
 
         return ins;
@@ -87,29 +85,25 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         }
         temp->right = ins;
         ins->parent = temp;
-        ins->count = 1;
         Rebal(ins);
 
         return ins;
     }
-    temp->count++;
 
     delete ins;
     return temp;
 }
 
 template <class T>
-T AATree<T>::Insert(T key, T value) {
+void AATree<T>::Insert(T key, T value) {
     AANode<T> *temp = new AANode<T>;
     temp->key = key;
     temp->value = value;
     temp->level = 1;
-    temp->count = 0;
     temp->left = nullptr;
     temp->right = nullptr;
     temp->parent = nullptr;
-    temp = InsertHelper(root, temp);
-    return temp->count;
+    InsertHelper(root, temp);
 }
 
 template <class T>
