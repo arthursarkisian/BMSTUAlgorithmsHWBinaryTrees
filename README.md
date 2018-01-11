@@ -166,7 +166,7 @@ struct node {
 
 Вращения использованные в работе. 
 
-[alt text](https://github.com/Arthurunique24/BMSTUAlgorithmsHWBinaryTrees/blob/master/img/AVLTreeRotation.png)
+![alt text](https://github.com/Arthurunique24/BMSTUAlgorithmsHWBinaryTrees/blob/master/img/AVLTreeRotation.png)
 
 В каждом случае достаточно просто доказать то, что операция приводит к нужному результату и что полная высота уменьшается не более чем на 1 и не может увеличиться. Также можно заметить, что большое левое вращение это композиция правого малого вращения и левого малого вращения. Из-за условия балансированности высота дерева О(log(N)), где N- количество вершин, поэтому добавление элемента требует O(log(N)) операций.
 
