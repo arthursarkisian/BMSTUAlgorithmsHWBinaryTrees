@@ -25,13 +25,16 @@ public:
     T Max();
     T Search(T key);
     void PrintInOrderTraversal(std::ostream &outputstream);
+
+    int GetCountOfRatates();
 private:
+    int countOfRotations;
     AANode<T> *root;
 
     void DeallocMemory(AANode<T> *N);
     void Skew(AANode<T> *);
-    void Rebal(AANode<T> *);
     bool Split(AANode<T> *);
+    void Balance(AANode<T> *);
     void PrintInOrderTraversalHelper(std::ostream &, AANode<T> *);
     AANode<T> *InsertHelper(AANode<T> *, AANode<T> *);
     T SearchHelper(AANode<T> *, T);
@@ -40,6 +43,7 @@ private:
 
 template <class T>
 AATree<T>::AATree(){
+    countOfRotations = 0;
     root = new AANode<T>;
     root = nullptr;
 }
@@ -75,7 +79,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         }
         temp->left = ins;
         ins->parent = temp;
-        Rebal(ins);
+        Balance(ins);
 
         return ins;
     }
@@ -85,7 +89,7 @@ AANode<T> *AATree<T>::InsertHelper(AANode<T> *temp, AANode<T> *ins) {
         }
         temp->right = ins;
         ins->parent = temp;
-        Rebal(ins);
+        Balance(ins);
 
         return ins;
     }
@@ -149,25 +153,27 @@ bool AATree<T>::Delete(T key) {
 }
 
 template <class T>
-void AATree<T>::Skew(AANode<T> *temp)
-{
+void AATree<T>::Skew(AANode<T> *temp) {
+    countOfRotations++;
     AANode<T> *ptr = temp->left;
-    if (temp->parent->left == temp)
+    if (temp->parent->left == temp) {
         temp->parent->left = ptr;
-    else
+    } else {
         temp->parent->right = ptr;
+    }
     ptr->parent = temp->parent;
     temp->parent = ptr;
     temp->left = ptr->right;
-    if (temp->left != nullptr)
+    if (temp->left != nullptr) {
         temp->left->parent = temp;
+    }
     ptr->right = temp;
     temp->level = (temp->left ? temp->left->level + 1 : 1);
 }
 
 template <class T>
-bool AATree<T>::Split(AANode<T> *temp)
-{
+bool AATree<T>::Split(AANode<T> *temp) {
+    countOfRotations++;
     AANode<T>* ptr = temp->right;
     if (ptr && ptr->right && (ptr->right->level == temp->level)) {
         if (temp->parent->left == temp) {
@@ -190,7 +196,7 @@ bool AATree<T>::Split(AANode<T> *temp)
 }
 
 template <class T>
-void AATree<T>::Rebal(AANode<T> *temp) {
+void AATree<T>::Balance(AANode<T> *temp) {
     temp->left = nullptr;
     temp->right = nullptr;
     temp->level = 1;
@@ -266,4 +272,9 @@ T AATree<T>::SearchHelper(AANode<T> *temp, T key) {
 template <class T>
 T AATree<T>::Search(T key) {
     return SearchHelper(root, key);
+}
+
+template <class T>
+int AATree<T>::GetCountOfRatates() {
+    return countOfRotations;
 }

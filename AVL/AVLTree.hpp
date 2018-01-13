@@ -1,6 +1,6 @@
 #include<iostream>
 
-template<class T>
+template<typename T>
 struct AVLNode {
     T key;
     T value;
@@ -9,278 +9,272 @@ struct AVLNode {
     AVLNode *right;
 };
 
-template<class T>
+template<typename T>
 class AVLTree {
 public:
     AVLTree();
     ~AVLTree();
 
-    bool Insert(T, T);
-    bool Delete(T key);
+    void Insert(T, T);
+    bool Delete(T);
+    T Search(T);
 
-    T Max();
     T Min();
-
-    T Search(T key);
+    T Max();
 
     void PrintInOrderTraversal(std::ostream &);
     void PrintPreOrderTraversal(std::ostream &);
     void PrintPostOrderTraversal(std::ostream &);
 
+    int GetCountOfRatates();
+
 private:
-    AVLNode<T> *root;
-    AVLNode<T> *NIL;
+    AVLNode <T> *R;
+    AVLNode <T> *NIL;
 
-    void GetHeight(AVLNode<T> *N);
+    int countOfRotates;
 
-    AVLNode<T>* Has(AVLNode<T> *temp, T key);
-    T SearchHelper(AVLNode<T> *temp, T key);
-    AVLNode<T>* InsertHelper(AVLNode<T> *temp, T key, T value);
-    AVLNode<T>* DeleteHelper(AVLNode<T> *temp, T key);
-    AVLNode<T>* RotateLeft(AVLNode<T> *temp);
-    AVLNode<T>* RotateRight(AVLNode<T> *temp);
-    AVLNode<T>* Balance(AVLNode<T> *temp);
+    AVLNode<T>* InsertHelper(AVLNode<T> *, T, T);
+    AVLNode<T>* DeleteHelper(AVLNode<T> *, T);
+    T SearchHelper(AVLNode<T> *, T);
 
-    void PrintInOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
-    void PrintPreOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
-    void PrintPostOrderTraversalHelper(std::ostream &, AVLNode<T> *temp);
+    void GetHeight(AVLNode<T> *);
+    AVLNode<T>* RotateLeft(AVLNode<T> *);
+    AVLNode<T>* RotateRight(AVLNode<T> *);
+    AVLNode<T>* Balance(AVLNode<T> *);
 
-    void DeallocMemory(AVLNode<T> *temp);
+    void PrintInOrderTraversalHelper(std::ostream &, AVLNode<T> *);
+    void PrintPreOrderTraversalHelper(std::ostream &, AVLNode<T> *);
+    void PrintPostOrderTraversalHelper(std::ostream &, AVLNode<T> *);
+
+    void ClearTree(AVLNode<T> *N);
 };
 
-template<typename T>
+template <typename T>
 AVLTree<T>::AVLTree() {
-    root = NIL = new AVLNode<T>;
+    R = NIL = new AVLNode<T>;
     NIL->height = 0;
     NIL->left = NIL->right = nullptr;
+    countOfRotates = 0;
 }
 
-template<typename T>
+template <typename T>
 AVLTree<T>::~AVLTree() {
-    DeallocMemory(root);
+    ClearTree(R);
 }
 
-template<typename T>
-T AVLTree<T>::SearchHelper(AVLNode<T> *temp, T key) {
-    if (temp == NIL) {
-        return 0;
-    }
-
-    if (temp->key == key) {
-        return temp->value;
-    }
-
-    if (key < temp->key) {
-        return SearchHelper(temp->left, key);
-    } else {
-        return SearchHelper(temp->right, key);
-    }
-}
-
-template<typename T>
-T AVLTree<T>::Search(T key) {
-    return SearchHelper(root, key);
-}
-
-template<typename T>
-T AVLTree<T>::Max() {
-    AVLNode<T> *N = root;
-    while (N->right != NIL) {
-        N = N->right;
-    }
-    return N->value;
-}
-
-template<typename T>
-T AVLTree<T>::Min() {
-    AVLNode<T> *N = root;
-    while (N->left != NIL) N = N->left;
-    return N->value;
-}
-
-template<typename T>
-void AVLTree<T>::PrintInOrderTraversal(std::ostream &outputstream) {
-    PrintInOrderTraversalHelper(outputstream, root);
-}
-
-template<typename T>
-void AVLTree<T>::PrintPreOrderTraversal(std::ostream &outputstream) {
-    PrintPreOrderTraversalHelper(outputstream, root);
-}
-
-template<typename T>
-void AVLTree<T>::PrintPostOrderTraversal(std::ostream &outputstream) {
-    PrintPostOrderTraversalHelper(outputstream, root);
-}
-
-template<typename T>
+template <typename T>
 void AVLTree<T>::GetHeight(AVLNode<T> *N) {
-    N->height = 1 + N->left->height > N->right->height ? N->left->height : N->right->height;
+    N->height = 1 + (N->left->height > N->right->height ? N->left->height : N->right->height);
 }
 
-template<typename T>
-AVLNode<T> *AVLTree<T>::RotateLeft(AVLNode<T> *temp) {
-    AVLNode<T> *t = temp->left;
-    temp->left = t->right;
-    t->right = temp;
-    GetHeight(temp);
+template <typename T>
+AVLNode<T> *AVLTree<T>::RotateLeft(AVLNode<T> *N) {
+//    std::cout << "RotateLeft" << std::endl;
+    countOfRotates++;
+    AVLNode<T> *t = N->left;
+    N->left = t->right;
+    t->right = N;
+    GetHeight(N);
     GetHeight(t);
 
     return t;
 }
 
-template<typename T>
-AVLNode<T> *AVLTree<T>::RotateRight(AVLNode<T> *temp) {
-    AVLNode<T> *N = temp->right;
-    temp->right = N->left;
-    N->left = temp;
-    GetHeight(temp);
+template <typename T>
+AVLNode<T> *AVLTree<T>::RotateRight(AVLNode<T> *N) {
+    countOfRotates++;
+//    std::cout << "RotateRight" << std::endl;
+    AVLNode<T> *t = N->right;
+    N->right = t->left;
+    t->left = N;
     GetHeight(N);
+    GetHeight(t);
+
+    return t;
+}
+
+template <typename T>
+AVLNode<T> *AVLTree<T>::Balance(AVLNode<T> *N) {
+    GetHeight(N);
+
+    if (N->left->height > N->right->height + 1) {
+        if (N->left->right->height > N->left->left->height)
+            N->left = RotateRight(N->left);
+        N = RotateLeft(N);
+    }
+    else
+    if (N->right->height > N->left->height + 1) {
+        if (N->right->left->height > N->right->right->height)
+            N->right = RotateLeft(N->right);
+        N = RotateRight(N);
+    }
 
     return N;
 }
 
-template<typename T>
-AVLNode<T> *AVLTree<T>::InsertHelper(AVLNode<T> *temp, T key, T value) {
-    if (temp == NIL) {
-        temp = new AVLNode<T>;
-        temp->key = key;
-        temp->value = value;
-        temp->left = temp->right = NIL;
-        temp->height = 1;
+template <typename T>
+void AVLTree<T>::Insert(T key, T value) {
+    R = InsertHelper(R, key, value);
+}
 
-        return temp;
+template <typename T>
+AVLNode<T> *AVLTree<T>::InsertHelper(AVLNode<T> *N, T key, T value) {
+    if (N == NIL) {
+        N = new AVLNode<T>;
+        N->key = key;
+        N->value = value;
+        N->left = N->right = NIL;
+        N->height = 1;
+
+        return N;
     }
 
-    if (key <= temp->key) {
-        temp->left = InsertHelper(temp->left, key, value);
+    if (key <= N->key) {
+        N->left = InsertHelper(N->left, key, value);
+    }
+    else {
+        N->right = InsertHelper(N->right, key, value);
+    }
+
+    return Balance(N);
+}
+
+template <typename T>
+bool AVLTree<T>::Delete(T key) {
+    R = DeleteHelper(R, key);
+    if (R != NIL) {
+        return true;
     } else {
-        temp->right = InsertHelper(temp->right, key, value);
+        return false;
     }
-
-    return Balance(temp);
 }
 
-template<typename T>
-bool AVLTree<T>::Insert(T key, T value) {
-    root = InsertHelper(root, key, value);
-    return true;
-}
-
-template<typename T>
-AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *temp, T key) {
+template <typename T>
+AVLNode<T> *AVLTree<T>::DeleteHelper(AVLNode<T> *N, T key) {
     AVLNode<T> *t;
-    if (temp == NIL) {
-        return temp;
+    if (N == NIL) {
+        return N;
     }
-    if (temp->key == key) {
-        if (temp->left == NIL || temp->right == NIL) {
-            if (temp->left == NIL) {
-                t = temp->right;
+    if (N->key == key) {
+        if (N->left == NIL || N->right == NIL) {
+            if (N->left == NIL) {
+                t = N->right;
             } else {
-                t = temp->left;
+                t = N->left;
             }
-            delete temp;
+            delete N;
             return t;
         } else {
-            for (t = temp->right; t->left != NIL; t = t->left);
-            temp->key = t->key;
-            temp->right = DeleteHelper(temp->right, t->key);
-            return Balance(temp);
+            for (t = N->right; t->left != NIL; t = t->left);
+            N->key = t->key;
+            N->right = DeleteHelper(N->right, t->key);
+            return Balance(N);
         }
     }
 
-    if (key < temp->key) {
-        temp->left = DeleteHelper(temp->left, key);
+    if (key < N->key) {
+        N->left = DeleteHelper(N->left, key);
     } else {
-        temp->right = DeleteHelper(temp->right, key);
+        N->right = DeleteHelper(N->right, key);
     }
 
-    return Balance(temp);
+    return Balance(N);
 }
 
-template<typename T>
-bool AVLTree<T>::Delete(T key) {
-    if (Has(root, key)) {
-        root = DeleteHelper(root, key);
-        return true;
-    }
-    return false;
+template <typename T>
+T AVLTree<T>::Search(T key) {
+    return SearchHelper(R, key);
 }
 
-template<typename T>
-AVLNode<T> *AVLTree<T>::Balance(AVLNode<T> *temp) {
-    GetHeight(temp);
-
-    if (temp->left->height > temp->right->height + 1) {
-        if (temp->left->right->height > temp->left->left->height) {
-            temp->left = RotateRight(temp->left);
-        }
-        temp = RotateLeft(temp);
-    }
-    else if (temp->right->height > temp->left->height + 1) {
-        if (temp->right->left->height > temp->right->right->height) {
-            temp->right = RotateLeft(temp->right);
-        }
-        temp = RotateRight(temp);
+template <typename T>
+T AVLTree<T>::SearchHelper(AVLNode<T> *N, T key) {
+    if (N == NIL) {
+        return -1;
     }
 
-    return temp;
+    if (N->key == key) {
+        return N->value;
+    }
+
+    if (key < N->key) {
+        return SearchHelper(N->left, key);
+    }
+    else {
+        return SearchHelper(N->right, key);
+    }
 }
 
-template<typename T>
-void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
-    if (temp == NIL) {
+template <typename T>
+T AVLTree<T>::Min() {
+    AVLNode<T> *N = R;
+    while (N->left != NIL) N = N->left;
+    return N->key;
+}
+
+template <typename T>
+T AVLTree<T>::Max() {
+    AVLNode<T> *N = R;
+    while (N->right != NIL) N = N->right;
+    return N->key;
+}
+
+template <typename T>
+void AVLTree<T>::PrintInOrderTraversal(std::ostream &outputstream) {
+    PrintInOrderTraversalHelper(outputstream, R);
+}
+
+template <typename T>
+void AVLTree<T>::PrintInOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *N) {
+    if (N == NIL) {
         return;
     }
-    PrintInOrderTraversalHelper(outputstream, temp->left);
-    outputstream << temp->value << " ";
-    PrintInOrderTraversalHelper(outputstream, temp->right);
+    PrintInOrderTraversalHelper(outputstream, N->left);
+    outputstream << N->value << " ";
+    PrintInOrderTraversalHelper(outputstream, N->right);
 }
 
-template<typename T>
-void AVLTree<T>::PrintPreOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
-    if (temp == NIL) {
+template <typename T>
+void AVLTree<T>::PrintPreOrderTraversal(std::ostream &outputstream) {
+    PrintPreOrderTraversalHelper(outputstream, R);
+}
+
+template <typename T>
+void AVLTree<T>::PrintPreOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *N) {
+    if (N == NIL) {
         return;
     }
-    outputstream << temp->value << " ";
-    PrintPreOrderTraversalHelper(outputstream, temp->left);
-    PrintPreOrderTraversalHelper(outputstream, temp->right);
+    outputstream << N->value << " ";
+    PrintPreOrderTraversalHelper(outputstream, N->left);
+    PrintPreOrderTraversalHelper(outputstream, N->right);
 }
 
-template<typename T>
-void AVLTree<T>::PrintPostOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *temp) {
-    if (temp == NIL) {
+template <typename T>
+void AVLTree<T>::PrintPostOrderTraversal(std::ostream &outputstream) {
+    PrintPostOrderTraversalHelper(outputstream, R);
+}
+
+template <typename T>
+void AVLTree<T>::PrintPostOrderTraversalHelper(std::ostream &outputstream, AVLNode<T> *N) {
+    if (N == NIL) {
         return;
     }
-    PrintPostOrderTraversalHelper(outputstream, temp->left);
-    PrintPostOrderTraversalHelper(outputstream, temp->right);
-    outputstream << temp->value << " ";
+    PrintPostOrderTraversalHelper(outputstream, N->left);
+    PrintPostOrderTraversalHelper(outputstream, N->right);
+    outputstream << N->value << " ";
 }
 
-template<typename T>
-void AVLTree<T>::DeallocMemory(AVLNode<T> *temp) {
-    if (temp == NIL) {
+template <typename T>
+void AVLTree<T>::ClearTree(AVLNode<T> *N) {
+    if (N == NIL) {
         return;
     }
-    DeallocMemory(temp->left);
-    DeallocMemory(temp->right);
-    delete temp;
+    ClearTree(N->left);
+    ClearTree(N->right);
+    delete N;
 }
 
-template<typename T>
-AVLNode<T> *AVLTree<T>::Has(AVLNode<T> *temp, T key) {
-    if (temp == NIL) {
-        return nullptr;
-    }
-
-    if (temp->key == key) {
-        return temp;
-    }
-
-    if (key < temp->key) {
-        return Has(temp->left, key);
-    } else {
-        return Has(temp->right, key);
-    }
+template <typename T>
+int AVLTree<T>::GetCountOfRatates() {
+    return countOfRotates;
 }
