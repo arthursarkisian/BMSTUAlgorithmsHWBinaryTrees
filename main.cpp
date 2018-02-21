@@ -100,7 +100,7 @@ int main(int argc, char *argv[]) {
     std::ofstream fileOut(argv[2]);
     assert(fileOut);
 
-    //AVL tree tests
+    //AVLTree tree tests
 
     AVLTree<int> avlTree;
 
@@ -146,6 +146,8 @@ int main(int argc, char *argv[]) {
             fileOut << "error" << std::endl;
         }
     }
+
+    std::cout << "Count of rotations in AVLTree: " << avlTree.GetCountOfRatates() << std::endl;
 
     std::cout << "runtime = " << clock()/1000.0 << std::endl;
 
@@ -208,6 +210,8 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    std::cout << "Count of rotations in AA: " << aaTree.GetCountOfRatates() << std::endl;
+
     std::cout << "runtime = " << clock()/1000.0 << std::endl;
 
     if (FileIsEqual(argv[2], argv[3])) {
@@ -218,6 +222,22 @@ int main(int argc, char *argv[]) {
 
     fileIn.close();
     fileOut.close();
+
+//    AVLTree<int> avlTree;
+//    avlTree.Insert(4, 4);
+//    avlTree.Insert(6, 6);
+//    avlTree.Insert(3, 3);
+//    avlTree.Insert(5, 5);
+//    avlTree.Insert(10, 10);
+//    avlTree.Insert(8, 8);
+//    avlTree.Insert(9, 9);
+//    avlTree.PrintInOrderTraversal(std::cout);
+//    avlTree.Delete(5);
+//    std::cout << std::endl;
+//    avlTree.PrintInOrderTraversal(std::cout);
+//    std::cout << std::endl;
+//    std::cout << avlTree.Search(6);
+
 
     return 0;
 }
